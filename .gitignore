@@ -1,0 +1,60 @@
+# =========================
+# Java / Maven (backend)
+# =========================
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+build.log
+
+# Maven wrapper local cache
+.mvn/wrapper/maven-wrapper.jar
+
+# =========================
+# Node.js / Next.js (frontend)
+# =========================
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# =========================
+# Env / secrets
+# =========================
+.env
+.env.local
+.env.*.local
+application-local.properties
+
+# =========================
+# IDE
+# =========================
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.fleet/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# =========================
+# Misc
+# =========================
+*.swp
+*.swo
+*~
+.cache/
+coverage/
+*.tmp
