@@ -107,12 +107,20 @@ export default function Nav() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/login"
-                className="bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium px-4 py-1.5 rounded-md transition"
-              >
-                Sign in
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-neutral-700 hover:text-neutral-900 px-3 py-1.5 transition"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium px-4 py-1.5 rounded-md transition"
+                >
+                  Sign up
+                </Link>
+              </>
             )}
           </div>
 
@@ -169,12 +177,22 @@ export default function Nav() {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  className="inline-block bg-neutral-900 text-white text-sm font-medium px-4 py-1.5 rounded-md"
-                >
-                  Sign in
-                </Link>
+                <div className="flex gap-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 text-center border border-neutral-300 text-neutral-700 text-sm font-medium px-4 py-1.5 rounded-md"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 text-center bg-neutral-900 text-white text-sm font-medium px-4 py-1.5 rounded-md"
+                  >
+                    Sign up
+                  </Link>
+                </div>
               )}
             </div>
           </div>

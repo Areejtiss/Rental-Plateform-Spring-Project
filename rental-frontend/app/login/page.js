@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, setToken, setUser } from "@/lib/api";
@@ -94,6 +95,16 @@ export default function LoginPage() {
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
+
+          <p className="text-sm text-neutral-600 text-center pt-2">
+            New to RentaTN?{" "}
+            <Link
+              href="/register"
+              className="font-medium text-neutral-900 hover:underline"
+            >
+              Create an account
+            </Link>
+          </p>
         </form>
 
         <div className="mt-8 pt-6 border-t border-neutral-200">
