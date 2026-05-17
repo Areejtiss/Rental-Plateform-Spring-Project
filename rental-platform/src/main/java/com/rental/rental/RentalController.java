@@ -31,6 +31,14 @@ public class RentalController {
         return ResponseEntity.ok(rentalService.myRentals(currentUser));
     }
 
+    /** Admin: liste de toutes les rentals, filtrable par status. */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<RentalResponse>> findAll(
+            @RequestParam(required = false) RentalStatus status) {
+        return ResponseEntity.ok(rentalService.findAllForAdmin(status));
+    }
+
     @GetMapping("/on-my-items")
     @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     public ResponseEntity<List<RentalResponse>> onMyItems(@AuthenticationPrincipal AppUserDetails currentUser) {

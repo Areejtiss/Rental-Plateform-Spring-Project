@@ -32,6 +32,29 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
             """)
     List<Rental> findAllByOwnerIdFetched(@Param("ownerId") Long ownerId);
 
+    // Admin : toutes les rentals (avec JOIN FETCH anti N+1)
+    @Query("""
+            SELECT r FROM Rental r
+            JOIN FETCH r.item i
+            JOIN FETCH i.owner
+            JOIN FETCH i.category
+            JOIN FETCH r.renter
+            ORDER BY r.createdAt DESC
+            """)
+    List<Rental> findAllFetched();
+
+    // Admin : filtrage par status
+    @Query("""
+            SELECT r FROM Rental r
+            JOIN FETCH r.item i
+            JOIN FETCH i.owner
+            JOIN FETCH i.category
+            JOIN FETCH r.renter
+            WHERE r.status = :status
+            ORDER BY r.createdAt DESC
+            """)
+    List<Rental> findAllByStatusFetched(@Param("status") RentalStatus status);
+
     @Query("""
             SELECT COUNT(r) > 0 FROM Rental r
             WHERE r.item = :item

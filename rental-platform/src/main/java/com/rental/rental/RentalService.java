@@ -67,6 +67,15 @@ public class RentalService {
                 .stream().map(this::toResponse).toList();
     }
 
+    /** Admin only: list ALL rentals, optionally filtered by status. */
+    @Transactional(readOnly = true)
+    public List<RentalResponse> findAllForAdmin(RentalStatus status) {
+        List<Rental> rentals = (status == null)
+                ? rentalRepository.findAllFetched()
+                : rentalRepository.findAllByStatusFetched(status);
+        return rentals.stream().map(this::toResponse).toList();
+    }
+
     @Transactional(readOnly = true)
     public List<RentalResponse> rentalsOnMyItems(AppUserDetails currentUser) {
         return rentalRepository.findAllByOwnerIdFetched(currentUser.getId())

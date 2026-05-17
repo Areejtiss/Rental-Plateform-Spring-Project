@@ -11,12 +11,14 @@ export default function Nav() {
   const [user, setUser] = useState(null);
   const [logged, setLogged] = useState(false);
   const [canCreate, setCanCreate] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     setUser(getUser());
     setLogged(isLoggedIn());
     setCanCreate(hasRole("OWNER") || hasRole("ADMIN"));
+    setIsAdmin(hasRole("ADMIN"));
   }, [pathname]);
 
   function logout() {
@@ -71,6 +73,16 @@ export default function Nav() {
                 List an item
               </Link>
             )}
+            {isAdmin && (
+              <Link href="/admin/rentals" className={linkClass("/admin/rentals")}>
+                <span className="flex items-center gap-1.5">
+                  Admin
+                  <span className="text-[10px] font-bold bg-neutral-900 text-white px-1.5 py-0.5 rounded">
+                    ADM
+                  </span>
+                </span>
+              </Link>
+            )}
           </nav>
 
           {/* Right side */}
@@ -123,6 +135,11 @@ export default function Nav() {
             {canCreate && (
               <Link href="/create-item" className={`block ${linkClass("/create-item")}`} onClick={() => setMobileOpen(false)}>
                 List an item
+              </Link>
+            )}
+            {isAdmin && (
+              <Link href="/admin/rentals" className={`block ${linkClass("/admin/rentals")}`} onClick={() => setMobileOpen(false)}>
+                Admin · Bookings
               </Link>
             )}
             <div className="pt-3 border-t border-neutral-100">
