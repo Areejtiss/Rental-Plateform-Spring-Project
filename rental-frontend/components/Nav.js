@@ -89,7 +89,16 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-3">
             {logged ? (
               <>
-                <span className="text-sm text-neutral-600">{user?.email}</span>
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 hover:bg-neutral-100 rounded-md px-2 py-1 transition"
+                  title="Profile"
+                >
+                  <div className="w-7 h-7 bg-neutral-900 text-white rounded-full flex items-center justify-center text-xs font-semibold">
+                    {user?.email?.[0]?.toUpperCase()}
+                  </div>
+                  <span className="text-sm text-neutral-700">{user?.email}</span>
+                </Link>
                 <button
                   onClick={logout}
                   className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition"
@@ -142,14 +151,23 @@ export default function Nav() {
                 Admin · Bookings
               </Link>
             )}
-            <div className="pt-3 border-t border-neutral-100">
+            <div className="pt-3 border-t border-neutral-100 space-y-3">
               {logged ? (
-                <button
-                  onClick={logout}
-                  className="text-sm font-medium text-neutral-600"
-                >
-                  Sign out ({user?.email})
-                </button>
+                <>
+                  <Link
+                    href="/profile"
+                    className={`block ${linkClass("/profile")}`}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Profile · {user?.email}
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="text-sm font-medium text-neutral-600"
+                  >
+                    Sign out
+                  </button>
+                </>
               ) : (
                 <Link
                   href="/login"

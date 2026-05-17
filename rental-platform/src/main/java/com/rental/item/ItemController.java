@@ -37,6 +37,14 @@ public class ItemController {
         return ResponseEntity.ok(itemService.findById(id));
     }
 
+    /** Items listed by the current authenticated user. */
+    @GetMapping("/mine")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<java.util.List<ItemResponse>> mine(
+            @AuthenticationPrincipal AppUserDetails currentUser) {
+        return ResponseEntity.ok(itemService.myItems(currentUser));
+    }
+
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     public ResponseEntity<ItemResponse> create(@Valid @RequestBody ItemRequest req,

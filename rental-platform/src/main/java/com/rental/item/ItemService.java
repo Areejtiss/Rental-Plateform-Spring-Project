@@ -47,6 +47,13 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundException("Item not found: " + id));
     }
 
+    /** Items owned by the current user (JOIN FETCH anti N+1). */
+    @Transactional(readOnly = true)
+    public java.util.List<ItemResponse> myItems(AppUserDetails currentUser) {
+        return itemRepository.findAllByOwnerIdFetched(currentUser.getId())
+                .stream().map(this::toResponse).toList();
+    }
+
     @Transactional
     public ItemResponse create(ItemRequest req, AppUserDetails currentUser) {
         Category category = categoryRepository.findById(req.categoryId())
