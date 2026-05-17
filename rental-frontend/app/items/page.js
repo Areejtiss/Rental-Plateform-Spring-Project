@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api, isLoggedIn } from "@/lib/api";
-import { TUNISIAN_CITIES, categoryIcon } from "@/lib/constants";
+import { TUNISIAN_CITIES } from "@/lib/constants";
 
 export default function ItemsPage() {
   const [items, setItems] = useState([]);
@@ -53,7 +53,7 @@ export default function ItemsPage() {
 
   function showToast(type, text) {
     setToast({ type, text });
-    setTimeout(() => setToast(null), 4000);
+    setTimeout(() => setToast(null), 4500);
   }
 
   async function submitRental(e) {
@@ -69,7 +69,7 @@ export default function ItemsPage() {
       });
       showToast(
         "success",
-        `Location créée ! Total : ${data.totalPrice} TND (statut ${data.status})`
+        `Booking confirmed — total ${data.totalPrice} TND, status ${data.status}.`
       );
       setRentingItem(null);
       setStartDate("");
@@ -83,66 +83,55 @@ export default function ItemsPage() {
 
   return (
     <div className="fade-in">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 md:p-12 text-white mb-8 shadow-xl">
-        <h1 className="text-3xl md:text-5xl font-bold mb-3">
-          Louez. Économisez. Partagez.
+      {/* Header */}
+      <div className="mb-10 pb-8 border-b border-neutral-200">
+        <h1 className="text-3xl font-semibold text-neutral-900 tracking-tight">
+          Catalog
         </h1>
-        <p className="text-indigo-100 text-lg max-w-2xl">
-          La 1<sup>ère</sup> plateforme de location de matériel entre particuliers
-          en Tunisie. {items.length} articles disponibles partout dans le pays.
+        <p className="text-neutral-600 mt-2 max-w-2xl">
+          Browse {items.length} {items.length > 1 ? "items" : "item"} available
+          for rent across Tunisia. Filter by city, category, and price.
         </p>
       </div>
 
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed top-20 right-4 z-50 px-4 py-3 rounded-lg shadow-xl border-l-4 max-w-md fade-in ${
+          className={`fixed top-20 right-6 z-50 px-4 py-3 rounded-md shadow-lg border max-w-sm fade-in text-sm ${
             toast.type === "success"
-              ? "bg-emerald-50 border-emerald-500 text-emerald-800"
-              : "bg-red-50 border-red-500 text-red-800"
+              ? "bg-white border-emerald-200 text-emerald-900"
+              : "bg-white border-red-200 text-red-900"
           }`}
         >
-          <p className="font-medium">
-            {toast.type === "success" ? "✓ " : "✗ "} {toast.text}
-          </p>
+          <div className="flex items-start gap-3">
+            <span
+              className={`w-1 h-full rounded-full ${
+                toast.type === "success" ? "bg-emerald-500" : "bg-red-500"
+              }`}
+              style={{ minHeight: "20px" }}
+            />
+            <span>{toast.text}</span>
+          </div>
         </div>
       )}
 
-      {/* Filtres */}
-      <div className="bg-white rounded-xl shadow-md p-5 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-slate-800 flex items-center gap-2">
-            <span>🎯</span> Filtres
-          </h2>
-          {hasFilters && (
-            <button
-              onClick={resetFilters}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              Réinitialiser
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
-              🔍
-            </span>
-            <input
-              type="text"
-              placeholder="Recherche..."
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
+      {/* Filters */}
+      <div className="mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
+          <input
+            type="text"
+            placeholder="Search items..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && loadItems()}
+            className="md:col-span-4 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition"
+          />
           <select
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="md:col-span-3 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition"
           >
-            <option value="">Toutes les villes</option>
+            <option value="">All cities</option>
             {TUNISIAN_CITIES.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -152,173 +141,176 @@ export default function ItemsPage() {
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="md:col-span-2 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition"
           >
-            <option value="">Toutes catégories</option>
+            <option value="">Category</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
-                {categoryIcon(c.name)} {c.name}
+                {c.name}
               </option>
             ))}
           </select>
           <input
             type="number"
             step="0.01"
-            placeholder="Prix max (TND/j)"
+            placeholder="Max TND/day"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="md:col-span-2 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 transition"
           />
           <button
             onClick={loadItems}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm transition"
+            className="md:col-span-1 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium py-2 rounded-md transition"
           >
-            Appliquer
+            Search
           </button>
         </div>
+        {hasFilters && (
+          <button
+            onClick={resetFilters}
+            className="mt-2 text-xs text-neutral-500 hover:text-neutral-900 transition"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded mb-4">
+        <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-md mb-4 text-sm">
           {error}
         </div>
       )}
 
-      {/* Grid items */}
+      {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl shadow p-5">
-              <div className="skeleton h-6 w-2/3 rounded mb-3"></div>
+            <div key={i} className="bg-white rounded-lg border border-neutral-200 p-5">
+              <div className="skeleton h-5 w-2/3 rounded mb-3"></div>
               <div className="skeleton h-4 w-full rounded mb-2"></div>
               <div className="skeleton h-4 w-1/2 rounded"></div>
             </div>
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 text-center shadow">
-          <div className="text-6xl mb-3">🔍</div>
-          <h3 className="text-xl font-semibold text-slate-700 mb-2">
-            Aucun article trouvé
+        <div className="bg-white border border-neutral-200 rounded-lg p-12 text-center">
+          <h3 className="text-base font-semibold text-neutral-900 mb-1">
+            No results
           </h3>
-          <p className="text-slate-500">
-            Essaie de modifier ou réinitialiser les filtres.
+          <p className="text-sm text-neutral-600">
+            Try changing or clearing your filters.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item, idx) => (
             <article
               key={item.id}
-              className="bg-white rounded-xl shadow hover:shadow-xl transition-all duration-200 hover:-translate-y-1 overflow-hidden border border-slate-100 fade-in"
-              style={{ animationDelay: `${idx * 50}ms` }}
+              className="bg-white border border-neutral-200 rounded-lg p-5 hover:border-neutral-300 transition group fade-in"
+              style={{ animationDelay: `${Math.min(idx * 30, 200)}ms` }}
             >
-              <div className="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 p-8 text-center relative">
-                <span className="text-6xl">{categoryIcon(item.categoryName)}</span>
+              <div className="flex items-start justify-between gap-3 mb-1">
+                <h3 className="font-semibold text-neutral-900 leading-tight">
+                  {item.title}
+                </h3>
                 {item.available ? (
-                  <span className="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    Disponible
+                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded shrink-0">
+                    Available
                   </span>
                 ) : (
-                  <span className="absolute top-3 right-3 bg-slate-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    Indispo
+                  <span className="text-xs font-medium text-neutral-600 bg-neutral-100 border border-neutral-200 px-2 py-0.5 rounded shrink-0">
+                    Unavailable
                   </span>
                 )}
               </div>
-              <div className="p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-bold text-lg text-slate-900 leading-tight">
-                    {item.title}
-                  </h3>
+
+              <p className="text-sm text-neutral-600 mb-4 line-clamp-2 min-h-[2.5em]">
+                {item.description || "—"}
+              </p>
+
+              <div className="space-y-1.5 mb-4 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-500">Category</span>
+                  <span className="text-neutral-900">{item.categoryName}</span>
                 </div>
-                <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                  {item.description || "—"}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
-                  <span className="flex items-center gap-1">
-                    📍 {item.city}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    🏷️ {item.categoryName}
-                  </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-500">Location</span>
+                  <span className="text-neutral-900">{item.city}</span>
                 </div>
-                <div className="flex items-end justify-between pt-4 border-t border-slate-100">
-                  <div>
-                    <p className="text-xs text-slate-500">Par</p>
-                    <p className="text-sm font-medium text-slate-700">
-                      {item.ownerName}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-indigo-600">
-                      {item.dailyPrice}
-                      <span className="text-xs text-slate-500 font-normal ml-1">
-                        TND/j
-                      </span>
-                    </p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-500">Owner</span>
+                  <span className="text-neutral-900">{item.ownerName}</span>
                 </div>
-                {isLoggedIn() && item.available && (
+              </div>
+
+              <div className="flex items-end justify-between pt-4 border-t border-neutral-100">
+                <div>
+                  <p className="text-xs text-neutral-500">Per day</p>
+                  <p className="text-xl font-semibold text-neutral-900 tabular">
+                    {item.dailyPrice} <span className="text-sm font-normal text-neutral-500">TND</span>
+                  </p>
+                </div>
+                {isLoggedIn() && item.available ? (
                   <button
                     onClick={() => setRentingItem(item)}
-                    className="mt-4 w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-2.5 rounded-lg text-sm transition shadow hover:shadow-md"
+                    className="bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium px-4 py-2 rounded-md transition"
                   >
-                    Louer maintenant
+                    Rent
                   </button>
-                )}
-                {!isLoggedIn() && (
+                ) : !isLoggedIn() ? (
                   <a
                     href="/login"
-                    className="mt-4 block text-center text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+                    className="text-sm font-medium text-neutral-600 hover:text-neutral-900"
                   >
-                    Se connecter pour louer →
+                    Sign in →
                   </a>
-                )}
+                ) : null}
               </div>
             </article>
           ))}
         </div>
       )}
 
-      {/* Modal location */}
+      {/* Rent modal */}
       {rentingItem && (
         <div
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 fade-in"
+          className="fixed inset-0 bg-neutral-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 fade-in"
           onClick={() => setRentingItem(null)}
         >
           <div
-            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            className="bg-white rounded-lg max-w-md w-full shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start gap-3 mb-5">
-              <span className="text-4xl">
-                {categoryIcon(rentingItem.categoryName)}
-              </span>
-              <div>
-                <h3 className="text-xl font-bold">{rentingItem.title}</h3>
-                <p className="text-sm text-slate-500">
-                  {rentingItem.city} · {rentingItem.dailyPrice} TND/jour
-                </p>
-              </div>
+            <div className="p-6 border-b border-neutral-200">
+              <h3 className="font-semibold text-neutral-900">
+                Rent “{rentingItem.title}”
+              </h3>
+              <p className="text-sm text-neutral-600 mt-1">
+                {rentingItem.city} · {rentingItem.dailyPrice} TND/day
+              </p>
             </div>
-            <form onSubmit={submitRental} className="space-y-3">
+            <form onSubmit={submitRental} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold mb-1">Du</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                  Start date
+                </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2"
+                  className="w-full bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Au</label>
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                  End date
+                </label>
                 <input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2"
+                  className="w-full bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
                   required
                 />
               </div>
@@ -326,15 +318,15 @@ export default function ItemsPage() {
                 <button
                   type="button"
                   onClick={() => setRentingItem(null)}
-                  className="flex-1 border border-slate-300 hover:bg-slate-50 py-2.5 rounded-lg font-medium"
+                  className="flex-1 border border-neutral-300 hover:bg-neutral-50 text-neutral-900 text-sm font-medium py-2 rounded-md"
                 >
-                  Annuler
+                  Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white py-2.5 rounded-lg font-semibold shadow"
+                  className="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium py-2 rounded-md"
                 >
-                  Confirmer
+                  Confirm booking
                 </button>
               </div>
             </form>

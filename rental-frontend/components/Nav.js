@@ -25,119 +25,120 @@ export default function Nav() {
     router.refresh();
   }
 
-  const linkClass = (path) =>
-    `px-3 py-2 rounded-lg text-sm font-medium transition ${
-      pathname === path
-        ? "bg-white/15 text-white"
-        : "text-slate-300 hover:bg-white/10 hover:text-white"
+  const linkClass = (path) => {
+    const active = pathname === path;
+    return `text-sm font-medium transition ${
+      active
+        ? "text-neutral-900"
+        : "text-neutral-600 hover:text-neutral-900"
     }`;
+  };
 
   return (
-    <header className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-800 text-white shadow-lg sticky top-0 z-40 backdrop-blur">
-      <div className="max-w-6xl mx-auto px-4">
+    <header className="border-b border-neutral-200 bg-white sticky top-0 z-40">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/items" className="flex items-center gap-2 group">
-            <span className="text-2xl">🛠️</span>
-            <span className="font-bold text-lg tracking-tight">RentaTN</span>
-            <span className="hidden sm:inline text-xs text-indigo-200 ml-1">
-              · Tunisia
+          {/* Logo */}
+          <Link href="/items" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-neutral-900 rounded-md flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white">
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span className="font-semibold text-neutral-900 tracking-tight">
+              RentaTN
             </span>
           </Link>
 
-          {/* Desktop */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-8">
             <Link href="/items" className={linkClass("/items")}>
-              🔍 Items
+              Catalog
             </Link>
             {logged && (
               <Link href="/my-rentals" className={linkClass("/my-rentals")}>
-                📋 Mes locations
+                My rentals
               </Link>
             )}
             {canCreate && (
               <Link href="/create-item" className={linkClass("/create-item")}>
-                ✨ Créer
+                List an item
               </Link>
             )}
           </nav>
 
+          {/* Right side */}
           <div className="hidden md:flex items-center gap-3">
             {logged ? (
               <>
-                <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full">
-                  <div className="w-7 h-7 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center text-xs font-bold text-slate-900">
-                    {user?.email?.[0]?.toUpperCase()}
-                  </div>
-                  <span className="text-sm">{user?.email}</span>
-                </div>
+                <span className="text-sm text-neutral-600">{user?.email}</span>
                 <button
                   onClick={logout}
-                  className="bg-red-500 hover:bg-red-600 px-4 py-1.5 rounded-lg text-sm font-medium transition"
+                  className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition"
                 >
-                  Logout
+                  Sign out
                 </button>
               </>
             ) : (
               <Link
                 href="/login"
-                className="bg-white text-indigo-900 hover:bg-indigo-50 px-5 py-1.5 rounded-lg text-sm font-semibold transition"
+                className="bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium px-4 py-1.5 rounded-md transition"
               >
-                Se connecter
+                Sign in
               </Link>
             )}
           </div>
 
           {/* Mobile burger */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-white/10"
+            className="md:hidden p-2 -mr-2 text-neutral-700"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Menu"
           >
-            {mobileOpen ? "✕" : "☰"}
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {mobileOpen
+                ? <path d="M18 6L6 18M6 6l12 12" />
+                : <path d="M4 6h16M4 12h16M4 18h16" />}
+            </svg>
           </button>
         </div>
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 flex flex-col gap-1">
-            <Link
-              href="/items"
-              className={linkClass("/items")}
-              onClick={() => setMobileOpen(false)}
-            >
-              🔍 Items
+          <div className="md:hidden border-t border-neutral-100 py-4 space-y-3">
+            <Link href="/items" className={`block ${linkClass("/items")}`} onClick={() => setMobileOpen(false)}>
+              Catalog
             </Link>
             {logged && (
-              <Link
-                href="/my-rentals"
-                className={linkClass("/my-rentals")}
-                onClick={() => setMobileOpen(false)}
-              >
-                📋 Mes locations
+              <Link href="/my-rentals" className={`block ${linkClass("/my-rentals")}`} onClick={() => setMobileOpen(false)}>
+                My rentals
               </Link>
             )}
             {canCreate && (
-              <Link
-                href="/create-item"
-                className={linkClass("/create-item")}
-                onClick={() => setMobileOpen(false)}
-              >
-                ✨ Créer un item
+              <Link href="/create-item" className={`block ${linkClass("/create-item")}`} onClick={() => setMobileOpen(false)}>
+                List an item
               </Link>
             )}
-            <div className="border-t border-white/10 pt-3 mt-2">
+            <div className="pt-3 border-t border-neutral-100">
               {logged ? (
                 <button
                   onClick={logout}
-                  className="w-full bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-medium"
+                  className="text-sm font-medium text-neutral-600"
                 >
-                  Logout · {user?.email}
+                  Sign out ({user?.email})
                 </button>
               ) : (
                 <Link
                   href="/login"
-                  className="block bg-white text-indigo-900 px-4 py-2 rounded-lg text-sm font-semibold text-center"
+                  className="inline-block bg-neutral-900 text-white text-sm font-medium px-4 py-1.5 rounded-md"
                 >
-                  Se connecter
+                  Sign in
                 </Link>
               )}
             </div>
